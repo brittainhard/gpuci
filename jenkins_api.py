@@ -1,8 +1,5 @@
-import requests
-
+import datetime
 from secrets import user, password
-
-# r = requests.get("http://18.191.94.64/job/goai-docker-container-builder/api/json?tree=builds", auth=(user, password))
 
 import jenkinsapi
 from jenkinsapi.jenkins import Jenkins
@@ -12,4 +9,6 @@ jobs = []
 for item in j.items():
     jobs.append(item[1])
 
-last_good_jobs = [job.get_last_good_build().get_timestamp() for job in jobs]
+last = [job.get_last_good_build().get_timestamp() for job in jobs]
+now = datetime.datetime.now(tz=datetime.timezone.utc)
+now = now.replace(second=0, microsecond=0)
