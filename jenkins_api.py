@@ -1,5 +1,4 @@
 import datetime
-from secrets import user, password
 
 import jenkinsapi
 from jenkinsapi.jenkins import Jenkins
