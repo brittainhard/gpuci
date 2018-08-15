@@ -1,0 +1,8 @@
+name: gpu-instance-manager
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - pip:
+    - jenkinsapi
