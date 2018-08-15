@@ -4,5 +4,6 @@ channels:
   - defaults
 dependencies:
   - pip
+  - boto3
   - pip:
     - jenkinsapi
