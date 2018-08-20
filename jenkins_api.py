@@ -46,10 +46,11 @@ if __name__ == "__main__":
         aws_session_token=TOKEN,
         region_name="us-east-2"
     )
-    iam = boto3.client(
+    iam = boto3.Session(
         'iam',
-        aws_access_key_id=KEY_ID,
-        aws_secret_access_key=KEY,
+        KEY_ID,
+        KEY,
         aws_session_token=TOKEN,
+        region_name=region
     )
-    print(iam.get_policy(PolicyArn=os.environ.get("IAM_USER")))
+    print(iam.profile_name)
