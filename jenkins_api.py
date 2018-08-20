@@ -52,4 +52,4 @@ if __name__ == "__main__":
         aws_secret_access_key=KEY,
         aws_session_token=TOKEN,
     )
-    print(iam.list_users())
+    print(iam.get_policy(PolicyArn=os.environ.get("IAM_USER")))
