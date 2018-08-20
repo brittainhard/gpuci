@@ -51,6 +51,6 @@ if __name__ == "__main__":
         KEY_ID,
         KEY,
         aws_session_token=TOKEN,
-        region_name=region
+        region_name="us-east-2"
     )
     print(iam.profile_name)
