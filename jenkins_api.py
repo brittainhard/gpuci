@@ -1,4 +1,4 @@
-import os
+import os, json
 import jenkinsapi
 import requests
 from jenkinsapi.jenkins import Jenkins
@@ -33,4 +33,4 @@ def jobs_running(jobs):
 if __name__ == "__main__":
     print(jobs_running(get_jobs()))
     r = requests.get(AWS_CREDENTIALS_URL)
-    print(r.text)
+    print(json.loads(r.text).keys())
