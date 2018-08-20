@@ -2,3 +2,5 @@ secrets.py
 .aws
 .vscode
 __pycache__
+sample.py
+scratch.py
