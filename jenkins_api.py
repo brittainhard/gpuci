@@ -46,4 +46,10 @@ if __name__ == "__main__":
         aws_session_token=TOKEN,
         region_name="us-east-2"
     )
-    print(ec2.describe_instances())
+    iam = boto3.client(
+        'iam',
+        aws_access_key_id=KEY_ID,
+        aws_secret_access_key=KEY,
+        aws_session_token=TOKEN,
+    )
+    print(iam.list_users())
