@@ -43,4 +43,4 @@ if __name__ == "__main__":
         aws_secret_access_key=AWS_KEY,
         region_name="us-east-2"
     )
-    print(ec2)
+    print(ec2.describe_instances())
