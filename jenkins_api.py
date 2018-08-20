@@ -35,6 +35,7 @@ def jobs_running(jobs):
 if __name__ == "__main__":
     r = requests.get(AWS_CREDENTIALS_URL)
     creds = json.loads(r.text)
+    print(creds)
     AWS_KEY_ID = creds["AccessKeyId"]
     AWS_KEY = creds["SecretAccessKey"]
     ec2 = boto3.client(
