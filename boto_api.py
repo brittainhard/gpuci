@@ -1,6 +1,7 @@
 import boto3
 from secrets import *
 
+
 ec2 = boto3.client(
     'ec2',
     aws_access_key_id=key_id,
