@@ -47,7 +47,6 @@ if __name__ == "__main__":
         region_name="us-east-2"
     )
     iam = boto3.Session(
-        'iam',
         aws_access_key_id=KEY_ID,
         aws_secret_access_key=KEY,
         aws_session_token=TOKEN,
