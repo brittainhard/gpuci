@@ -48,9 +48,9 @@ if __name__ == "__main__":
     )
     iam = boto3.Session(
         'iam',
-        KEY_ID,
-        KEY,
-        TOKEN,
-        "us-east-2"
+        aws_access_key_id=KEY_ID,
+        aws_secret_access_key=KEY,
+        aws_session_token=TOKEN,
+        region_name="us-east-2"
     )
     print(iam.profile_name)
