@@ -48,4 +48,4 @@ if __name__ == "__main__":
     ec2 = session.client('ec2')
     sts = session.client('sts')
     print(sts.get_caller_identity())
-    iam.simulate_principal_policy(PolicySourceArn=USER_ARN, ActionNames=["iam:CreateUser"])
+    session.simulate_principal_policy(PolicySourceArn=USER_ARN, ActionNames=["iam:CreateUser"])
