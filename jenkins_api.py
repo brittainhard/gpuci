@@ -38,12 +38,11 @@ if __name__ == "__main__":
     KEY_ID = creds["AccessKeyId"]
     KEY = creds["SecretAccessKey"]
     TOKEN = creds["Token"]
-    USER_ARN = os.environ.get("IAM_USER")
     session = boto3.Session(
         aws_access_key_id=KEY_ID,
         aws_secret_access_key=KEY,
         aws_session_token=TOKEN,
         region_name="us-east-2"
     )
-    ec2 = session.resource('ec2')
+    ec2 = session.client('ec2')
     ec2.describe_instances()
