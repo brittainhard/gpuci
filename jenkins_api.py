@@ -35,21 +35,15 @@ def jobs_running(jobs):
 if __name__ == "__main__":
     r = requests.get(AWS_CREDENTIALS_URL)
     creds = json.loads(r.text)
-    print(creds)
     KEY_ID = creds["AccessKeyId"]
     KEY = creds["SecretAccessKey"]
     TOKEN = creds["Token"]
-    ec2 = boto3.client(
-        'ec2',
+    session = boto3.Session(
         aws_access_key_id=KEY_ID,
         aws_secret_access_key=KEY,
         aws_session_token=TOKEN,
         region_name="us-east-2"
     )
-    iam = boto3.Session(
-        aws_access_key_id=KEY_ID,
-        aws_secret_access_key=KEY,
-        aws_session_token=TOKEN,
-        region_name="us-east-2"
-    )
-    print(iam.profile_name)
+    ec2 = session.client('ec2')
+    sts = session.client('sts')
+    print(sts.get_caller_identity())
