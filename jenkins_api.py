@@ -38,6 +38,7 @@ if __name__ == "__main__":
     KEY_ID = creds["AccessKeyId"]
     KEY = creds["SecretAccessKey"]
     TOKEN = creds["Token"]
+    USER_ARN = os.environ.get("IAM_USER")
     session = boto3.Session(
         aws_access_key_id=KEY_ID,
         aws_secret_access_key=KEY,
@@ -47,3 +48,4 @@ if __name__ == "__main__":
     ec2 = session.client('ec2')
     sts = session.client('sts')
     print(sts.get_caller_identity())
+    iam.simulate_principal_policy(PolicySourceArn=USER_ARN, ActionNames=["iam:CreateUser"])
