@@ -45,8 +45,5 @@ if __name__ == "__main__":
         aws_session_token=TOKEN,
         region_name="us-east-2"
     )
-    ec2 = session.client('ec2')
-    sts = session.client('sts')
-    iam = session.client('iam')
-    print(sts.get_caller_identity())
-    iam.simulate_principal_policy(PolicySourceArn=USER_ARN, ActionNames=["iam:CreateUser"])
+    ec2 = session.resource('ec2')
+    ec2.describe_instances()
