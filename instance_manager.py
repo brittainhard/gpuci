@@ -84,4 +84,5 @@ if __name__ == "__main__":
     instances = list(ec2.instances.iterator())
     print(close_to_next_hour(instances[0]))
     print(get_gpu_instance(instances))
-    print(cl.describe_instances())
+    print(instances[0].placement_group)
+    print(instances[1].placement_group)
