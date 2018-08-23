@@ -47,7 +47,8 @@ def time_difference(instance):
 
 
 def close_to_next_hour(instance):
-    diff = time_difference(intance)
+    diff = time_difference(instance)
+    print(diff)
     return 60 - diff.minute <= 2
 
 
