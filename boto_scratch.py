@@ -27,13 +27,10 @@ def time_difference(instance):
     return datetime.time(minute=minutes, second=seconds)
 
 
-def close_to_next_hour(instance):
-    time = created_on(instance)
-    potato = datetime.datetime.now(tz=dateutil.tz.tz.tzutc()) - time
-    return potato
+def close_to_next_hour(time):
+    return 60 - time.minute <= 2
 
 
 ec2 = session.resource("ec2")
 instance = list(ec2.instances.iterator())[0]
-diff = time_difference(instance)
-print(diff)
+diff = close_to_next_hour(time_difference(instance))

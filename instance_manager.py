@@ -1,4 +1,7 @@
 import os, json
+import datetime
+import dateutil
+
 import jenkinsapi
 import requests
 import boto3
@@ -32,17 +35,34 @@ def jobs_running(jobs):
     return any(running)
 
 
+def running(instance):
+    return instance.state["Code"] == 16
+
+
+def time_difference(instance):
+    tm = datetime.datetime.now(tz=dateutil.tz.tz.tzutc()) - instance.launch_time
+    hours, remainder = divmod(tm.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return datetime.time(minute=minutes, second=seconds)
+
+
+def close_to_next_hour(instance):
+    diff = time_difference(intance)
+    return 60 - diff.minute <= 2
+
+
 if __name__ == "__main__":
     r = requests.get(AWS_CREDENTIALS_URL)
     creds = json.loads(r.text)
-    KEY_ID = creds["AccessKeyId"]
-    KEY = creds["SecretAccessKey"]
-    TOKEN = creds["Token"]
+    AWS_KEY_ID = creds["AccessKeyId"]
+    AWS_KEY = creds["SecretAccessKey"]
+    AWS_SESSION_TOKEN = creds["Token"]
     session = boto3.Session(
-        aws_access_key_id=KEY_ID,
-        aws_secret_access_key=KEY,
-        aws_session_token=TOKEN,
+        aws_access_key_id=AWS_KEY_ID,
+        aws_secret_access_key=AWS_KEY,
+        aws_session_token=AWS_SESSION_TOKEN,
         region_name="us-east-2"
     )
-    ec2 = session.client('ec2')
-    ec2.describe_instances()
+    ec2 = session.resource('ec2')
+    instances = list(ec2.instances.iterator())
+    print(close_to_next_hour(instances[0]))
