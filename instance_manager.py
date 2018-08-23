@@ -77,10 +77,11 @@ if __name__ == "__main__":
         aws_access_key_id=AWS_KEY_ID,
         aws_secret_access_key=AWS_KEY,
         aws_session_token=AWS_SESSION_TOKEN,
+        region_name="us-east-2"
     )
     ec2 = session.resource('ec2')
-    cl = session.client('ec2')
+    cl = session.clientj('ec2')
     instances = list(ec2.instances.iterator())
     print(close_to_next_hour(instances[0]))
     print(get_gpu_instance(instances))
-    cl.describe_intances()
+    cl.describe_instances()
