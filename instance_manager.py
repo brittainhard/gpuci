@@ -57,13 +57,14 @@ def close_to_next_hour(instance):
 
 def get_gpu_instance(instances):
     for x in instances:
+        print(x.image.id)
         if x.image.id == AMI:
             return x
     return None
 
+
 def manage_instance(instance):
     pass
-
 
 
 if __name__ == "__main__":

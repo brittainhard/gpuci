@@ -3,6 +3,7 @@ import datetime
 import dateutil
 from secrets import *
 
+AMI = "ami-a9d09ed1"
 
 session = boto3.Session(
     aws_access_key_id=key_id,
@@ -32,5 +33,9 @@ def close_to_next_hour(time):
 
 
 ec2 = session.resource("ec2")
-instance = list(ec2.instances.iterator())[0]
-diff = close_to_next_hour(time_difference(instance))
+instances = list(ec2.instances.iterator())
+inst = instances[0]
+
+for x in instances:
+    if x.image.id == AMI:
+        pass
