@@ -13,6 +13,10 @@ AWS_CREDENTIALS_URL = os.environ.get("AWS_CREDENTIALS_URL", "")
 AWS_KEY = ""
 AWS_KEY_ID = ""
 
+SECURITY_GROUP = os.environ.get("SECURITY_GROUP", "")
+AMI = os.environ.get("AMI", "")
+ELASTIC_IP = os.environ.get("ELASTIC_IP", "")
+
 
 def get_jenkins_client(username, password):
     return jenkinsapi.Jenkins(JENKINS_URL, username, password)
@@ -41,15 +45,25 @@ def running(instance):
 
 def time_difference(instance):
     tm = datetime.datetime.now(tz=dateutil.tz.tz.tzutc()) - instance.launch_time
+    print(tm)
     hours, remainder = divmod(tm.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
     return datetime.time(minute=minutes, second=seconds)
 
 
 def close_to_next_hour(instance):
-    diff = time_difference(instance)
-    print(diff)
-    return 60 - diff.minute <= 2
+    return 60 - time_difference(instance).minute <= 2
+
+
+def get_gpu_instance(instances):
+    for x in instances:
+        if x.image.id == AMI:
+            return x
+    return None
+
+def manage_instance(instance):
+    pass
+
 
 
 if __name__ == "__main__":
@@ -67,3 +81,4 @@ if __name__ == "__main__":
     ec2 = session.resource('ec2')
     instances = list(ec2.instances.iterator())
     print(close_to_next_hour(instances[0]))
+    print(get_gpu_instance(instances))
