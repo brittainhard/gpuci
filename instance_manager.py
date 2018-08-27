@@ -1,7 +1,7 @@
 import os, json, argparse
 import datetime, dateutil
 
-import jenkinsapi
+from jenkinsapi import jenkins
 import requests
 import boto3
 
@@ -35,7 +35,6 @@ def get_running_instances(instances):
 
 def get_gpu_instance(instances):
     for x in instances:
-        print(x.image.id)
         if x.image.id == AMI:
             return x
     return None
@@ -88,7 +87,7 @@ def spawn_instances(dry_run=False):
 
 
 def get_jobs():
-    jenk = jenkinsapi.Jenkins(JENKINS_URL)
+    jenk = jenkins.Jenkins(JENKINS_URL)
     jobs = []
     for item in jenk.items():
         if str(item[1]) in [str(job) for job in jobs]:
@@ -100,8 +99,7 @@ def get_jobs():
 
 
 def jobs_running(jobs):
-    running = [job.is_running() for job in jobs]
-    return any(running)
+    return [job.is_running() for job in jobs]
 
 
 def time_difference(instance):
@@ -120,6 +118,10 @@ def terminate_instance(instance):
 
 
 def manage_instances(dry_run=False):
+    jobs = jobs_running(get_jobs())
+    instance = get_gpu_instance(get_instances())
+    if jobs:
+        pass
     pass
 
 
@@ -154,3 +156,4 @@ if __name__ == "__main__":
         spawn_instances(args.dry_run)
     elif args.instance_manager:
         manage_instances(dry_run)
+
