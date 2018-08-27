@@ -18,7 +18,7 @@ ELASTIC_IP = os.environ.get("ELASTIC_IP", "")
 
 
 def get_instances():
-    return list(ec2.instances.iterator())
+    return list(rs.instances.iterator())
 
 
 def instance_is_running(instance):
@@ -51,7 +51,7 @@ def attach_elastic_ip(instance):
 
 
 def create_gpu_instance():
-    instances = ec2.create_instances(
+    instances = rs.create_instances(
         ImageId=AMI,
         MinCount=1,
         MaxCount=1,
