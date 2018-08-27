@@ -1,6 +1,5 @@
 import os, json
-import datetime
-import dateutil
+import datetime, dateutil
 
 import jenkinsapi
 import requests
@@ -16,10 +15,6 @@ AWS_KEY_ID = ""
 SECURITY_GROUP = os.environ.get("SECURITY_GROUP", "")
 AMI = os.environ.get("AMI", "")
 ELASTIC_IP = os.environ.get("ELASTIC_IP", "")
-
-
-def get_jenkins_client(username, password):
-    return jenkinsapi.Jenkins(JENKINS_URL, username, password)
 
 
 def get_jobs():
@@ -39,13 +34,8 @@ def jobs_running(jobs):
     return any(running)
 
 
-def running(instance):
-    return instance.state["Code"] == 16
-
-
 def time_difference(instance):
     tm = datetime.datetime.now(tz=dateutil.tz.tz.tzutc()) - instance.launch_time
-    print(tm)
     hours, remainder = divmod(tm.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
     return datetime.time(minute=minutes, second=seconds)
@@ -63,7 +53,51 @@ def get_gpu_instance(instances):
     return None
 
 
-def manage_instance(instance):
+def get_instances():
+    return list(ec2.instances.iterator())
+
+
+def instance_is_running(instance):
+    return instance.state["Code"] == 16
+
+
+def get_running_instances(instances):
+    running_instances = []
+    for x in instances:
+        if instance_is_running(x):
+            running_instances.append(x)
+    return running_instances
+
+
+def attach_elastic_ip(instance):
+	try:
+		response = cl.associate_address(AllocationId=EIP,
+										 InstanceId=instance.id)
+		print(response)
+	except ClientError as e:
+		print(e)
+
+
+def terminate_instance(instance):
+    instance.terminate()
+
+
+def create_instance():
+    instances = cl.create_instances(
+        ImageId=AMI,
+        MinCount=1,
+        MaxCount=1,
+        SecurityGroupIds=[SECURITY_GROUP],
+        InstanceType=INSTANCE_SIZE,
+    )
+    return instances
+
+
+def manage_instances():
+    pass
+
+
+def spawn_instances():
     pass
 
 
@@ -79,4 +113,5 @@ if __name__ == "__main__":
         aws_session_token=AWS_SESSION_TOKEN,
         region_name="us-east-2"
     )
-    ec2 = session.resource('ec2')
+    rs = session.resource('ec2')
+    cl = session.client('ec2')

@@ -4,11 +4,6 @@ import datetime
 import dateutil
 from secrets import *
 
-AMI = "ami-a9d09ed1"
-SECURITY_GROUP = "sg-0bfaf68638765cb9f"
-EIP = "eipalloc-05cac4bd27006b123"
-INSTANCE_SIZE = "t2.micro"
-
 session = boto3.Session(
     aws_access_key_id=key_id,
     aws_secret_access_key=key,
