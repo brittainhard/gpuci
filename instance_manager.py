@@ -1,4 +1,4 @@
-import os, json
+import os, json, argparse
 import datetime, dateutil
 
 import jenkinsapi
@@ -74,11 +74,13 @@ def create_gpu_instance():
     return instances[0]
 
 
-def spawn_instances():
+def spawn_instances(dry_run=False):
     instances = get_instances()
     running = get_running_instances(instances)
     gpu = get_gpu_instance(running)
     if gpu:
+        return
+    elif dry_run:
         return
     else:
         instance = create_gpu_instance()
@@ -117,7 +119,7 @@ def terminate_instance(instance):
     instance.terminate()
 
 
-def manage_instances():
+def manage_instances(dry_run=False):
     pass
 
 
@@ -135,3 +137,20 @@ if __name__ == "__main__":
     )
     rs = session.resource('ec2')
     cl = session.client('ec2')
+
+    parser = argparse.ArgumentParser("Spawns instances and checks for instance statuses.")
+    parser.add_argument("--spawn-instances", dest="instance_spawner",
+        action="store_true", default=False)
+    parser.add_argument("--manage-instances", dest="instance_manager",
+        action="store_true", default=False)
+    parser.add_argument("--dry-run", dest="dry_run",
+        action="store_true", default=False)
+    args = parser.parse_args()
+    if args.instance_spawner and args.instance_manager:
+        exit("Cannot spawn and manage instances at the same time.")
+    elif not args.instance_spawner and not args.instance_manager:
+        exit("Please specify either --spawn-instances or --manage-instances.")
+    elif args.instance_spawner:
+        spawn_instances(args.dry_run)
+    elif args.instance_manager:
+        manage_instances(dry_run)
