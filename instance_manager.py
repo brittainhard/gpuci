@@ -17,6 +17,74 @@ AMI = os.environ.get("AMI", "")
 ELASTIC_IP = os.environ.get("ELASTIC_IP", "")
 
 
+def get_instances():
+    return list(ec2.instances.iterator())
+
+
+def instance_is_running(instance):
+    return instance.state["Code"] == 16
+
+
+def get_running_instances(instances):
+    running_instances = []
+    for x in instances:
+        if instance_is_running(x):
+            running_instances.append(x)
+    return running_instances
+
+
+def get_gpu_instance(instances):
+    for x in instances:
+        print(x.image.id)
+        if x.image.id == AMI:
+            return x
+    return None
+
+
+def attach_elastic_ip(instance):
+	try:
+		response = cl.associate_address(AllocationId=EIP,
+										 InstanceId=instance.id)
+		print(response)
+	except ClientError as e:
+		print(e)
+
+
+def create_gpu_instance():
+    instances = ec2.create_instances(
+        ImageId=AMI,
+        MinCount=1,
+        MaxCount=1,
+        SecurityGroupIds=[SECURITY_GROUP],
+        InstanceType=INSTANCE_SIZE,
+    )
+
+    status = None
+    while not status:
+        status = cl.describe_instance_status(Filters=
+            [
+                {
+                    "Name": "instance-state-name",
+                    "Values": ["running"]
+                }
+            ],InstanceIds=[instances[0].id]
+        )["InstanceStatuses"]
+        print("Not Running.")
+        time.sleep(5)
+    return instances[0]
+
+
+def spawn_instances():
+    instances = get_instances()
+    running = get_running_instances(instances)
+    gpu = get_gpu_instance(running)
+    if gpu:
+        return
+    else:
+        instance = create_gpu_instance()
+        attach_elastic_ip(instances[0])
+
+
 def get_jobs():
     jenk = jenkinsapi.Jenkins(JENKINS_URL)
     jobs = []
@@ -45,59 +113,11 @@ def close_to_next_hour(instance):
     return 60 - time_difference(instance).minute <= 2
 
 
-def get_gpu_instance(instances):
-    for x in instances:
-        print(x.image.id)
-        if x.image.id == AMI:
-            return x
-    return None
-
-
-def get_instances():
-    return list(ec2.instances.iterator())
-
-
-def instance_is_running(instance):
-    return instance.state["Code"] == 16
-
-
-def get_running_instances(instances):
-    running_instances = []
-    for x in instances:
-        if instance_is_running(x):
-            running_instances.append(x)
-    return running_instances
-
-
-def attach_elastic_ip(instance):
-	try:
-		response = cl.associate_address(AllocationId=EIP,
-										 InstanceId=instance.id)
-		print(response)
-	except ClientError as e:
-		print(e)
-
-
 def terminate_instance(instance):
     instance.terminate()
 
 
-def create_instance():
-    instances = cl.create_instances(
-        ImageId=AMI,
-        MinCount=1,
-        MaxCount=1,
-        SecurityGroupIds=[SECURITY_GROUP],
-        InstanceType=INSTANCE_SIZE,
-    )
-    return instances
-
-
 def manage_instances():
-    pass
-
-
-def spawn_instances():
     pass
 
 

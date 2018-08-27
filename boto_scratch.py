@@ -4,6 +4,8 @@ import datetime
 import dateutil
 from secrets import *
 
+import time
+
 session = boto3.Session(
     aws_access_key_id=key_id,
     aws_secret_access_key=key,
@@ -60,7 +62,7 @@ def terminate_instance(instance):
     instance.terminate()
 
 
-def create_instance():
+def create_gpu_instance():
     instances = ec2.create_instances(
         ImageId=AMI,
         MinCount=1,
@@ -68,7 +70,20 @@ def create_instance():
         SecurityGroupIds=[SECURITY_GROUP],
         InstanceType=INSTANCE_SIZE,
     )
-    return instances
+
+    status = None
+    while not status:
+        status = cl.describe_instance_status(Filters=
+            [
+                {
+                    "Name": "instance-state-name",
+                    "Values": ["running"]
+                }
+            ],InstanceIds=[instances[0].id]
+        )["InstanceStatuses"]
+        print("Not Running.")
+        time.sleep(5)
+    return instances[0]
      
 
 ec2 = session.resource("ec2")
