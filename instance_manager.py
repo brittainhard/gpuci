@@ -80,9 +80,3 @@ if __name__ == "__main__":
         region_name="us-east-2"
     )
     ec2 = session.resource('ec2')
-    cl = session.client('ec2')
-    instances = list(ec2.instances.iterator())
-    print(close_to_next_hour(instances[0]))
-    print(get_gpu_instance(instances))
-    print(instances[0].placement)
-    print(instances[1].placement)

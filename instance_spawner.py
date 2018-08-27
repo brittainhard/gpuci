@@ -1,5 +1,6 @@
 import boto3
 import jenkinsapi
+import requests
 
 
 if __name__ == "__main__":
@@ -14,5 +15,4 @@ if __name__ == "__main__":
         aws_session_token=AWS_SESSION_TOKEN,
         region_name="us-east-2"
     )
-    ec2 = session.resource('ec2')
-    instances = list(ec2.instances.terator())
+    ec2 = session.client('ec2')

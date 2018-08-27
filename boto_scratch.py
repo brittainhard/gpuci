@@ -1,9 +1,13 @@
 import boto3
+from botocore.exceptions import ClientError
 import datetime
 import dateutil
 from secrets import *
 
 AMI = "ami-a9d09ed1"
+SECURITY_GROUP = "sg-0bfaf68638765cb9f"
+EIP = "eipalloc-05cac4bd27006b123"
+INSTANCE_SIZE = "t2.micro"
 
 session = boto3.Session(
     aws_access_key_id=key_id,
@@ -32,10 +36,47 @@ def close_to_next_hour(time):
     return 60 - time.minute <= 2
 
 
-ec2 = session.resource("ec2")
-instances = list(ec2.instances.iterator())
-inst = instances[0]
+def get_gpu_instance(instances):
+    for x in instances:
+        print(x.image.id)
+        if x.image.id == AMI:
+            return x
+    return None
 
-for x in instances:
-    if x.image.id == AMI:
-        pass
+
+def attach_elastic_ip(instance):
+	try:
+		response = cl.associate_address(AllocationId=EIP,
+										 InstanceId=instance.id)
+		print(response)
+	except ClientError as e:
+		print(e)
+
+
+def get_running_instances(instances):
+    running_instances = []
+    for x in instances:
+        if running(x):
+            running_instances.append(x)
+    return running_instances
+
+
+def terminate_instance(instance):
+    instance.terminate()
+
+
+def create_instance():
+    instances = ec2.create_instances(
+        ImageId=AMI,
+        MinCount=1,
+        MaxCount=1,
+        SecurityGroupIds=[SECURITY_GROUP],
+        InstanceType=INSTANCE_SIZE,
+    )
+    return instances
+     
+
+ec2 = session.resource("ec2")
+cl = session.client("ec2")
+instances = list(ec2.instances.iterator())
+a = get_gpu_instance(instances)
