@@ -79,7 +79,9 @@ def spawn_instances(dry_run=False):
         return
     elif not gpu:
         instance = create_gpu_instance()
+        print("Instance created.")
         attach_elastic_ip(instances[0])
+        print("Elastic IP Attached.")
 
 
 def get_jobs():
