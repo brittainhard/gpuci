@@ -45,14 +45,25 @@ def attach_elastic_ip(instance):
 		print(e)
 
 
-def create_gpu_instance():
-    instances = rs.create_instances(
-        ImageId=AMI,
-        MinCount=1,
-        MaxCount=1,
-        SecurityGroupIds=[SECURITY_GROUP],
-        InstanceType=INSTANCE_SIZE,
+def create_gpu_instance(dry_run=False):
+    instances = cl.request_spot_instances(
+        DryRun=dry_run,
+        InstanceCount=1,
+        SpotPrice="0.03",
+        Type="one-time",
+        LaunchSpecification={
+          "ImageId": AMI,
+          "KeyName": "goai-gpuci",
+          "SecurityGroupIds": [SECURITY_GROUP],
+          "InstanceType": INSTANCE_SIZE,
+          "Placement": {
+            "AvailabilityZone": "us-east-2b"
+          }
+        }
     )
+    if dry_run:
+        print("Dry run successful.")
+        exit(0)
 
     status = None
     while not status:
@@ -73,12 +84,10 @@ def spawn_instances(dry_run=False):
     instances = get_instances()
     running = get_running_instances(instances)
     gpu = get_gpu_instance(running)
-    if dry_run:
-        return
     elif gpu:
         return
     elif not gpu:
-        instance = create_gpu_instance()
+        instance = create_gpu_instance(dry_run)
         print("Instance created.")
         attach_elastic_ip(instances[0])
         print("Elastic IP Attached.")
