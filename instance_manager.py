@@ -84,7 +84,7 @@ def spawn_instances(dry_run=False):
     instances = get_instances()
     running = get_running_instances(instances)
     gpu = get_gpu_instance(running)
-    elif gpu:
+    if gpu:
         return
     elif not gpu:
         instance = create_gpu_instance(dry_run)
