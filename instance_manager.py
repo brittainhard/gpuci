@@ -5,6 +5,7 @@ from jenkinsapi import jenkins
 import requests
 import boto3
 
+
 NON_GPU_JOBS = [
     "goai-docker-container-builder",
     "gpu-instance-manager",
@@ -48,7 +49,7 @@ def create_gpu_instance(dry_run=False):
     spot_request = cl.request_spot_instances(
         DryRun=dry_run,
         InstanceCount=1,
-        SpotPrice="0.03",
+        SpotPrice="1.50",
         Type="one-time",
         LaunchSpecification={
             "ImageId": AMI,
