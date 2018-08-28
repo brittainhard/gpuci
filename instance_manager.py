@@ -108,7 +108,7 @@ def time_difference(instance):
 
 def close_to_next_hour(instance):
     difference = 60 - time_difference(instance).minute
-    return difference >= 2, difference
+    return difference <= 2, difference
 
 
 def manage_instances(dry_run=False, terminate_instance=False):
@@ -124,7 +124,6 @@ def manage_instances(dry_run=False, terminate_instance=False):
         return
 
     expiry = close_to_next_hour(gpu)
-    print(expiry)
     if not expiry[0]:
         print("Instance not yet ready to be stopped.")
         print("%d minutes left" % expiry[1])
