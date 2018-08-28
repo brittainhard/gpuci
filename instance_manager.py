@@ -38,7 +38,7 @@ def get_gpu_instance(instances):
 
 def attach_elastic_ip(instance):
 	try:
-		response = cl.associate_address(AllocationId=EIP,
+		response = cl.associate_address(AllocationId=ELASTIC_IP,
 										 InstanceId=instance.id)
 		print(response)
 	except ClientError as e:
