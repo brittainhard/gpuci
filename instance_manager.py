@@ -61,12 +61,6 @@ def create_gpu_instance(dry_run=False):
         }
     )
 
-    instance = None
-    while not instance:
-        print("Not Running.")
-        time.sleep(5)
-        instance = get_gpu_instance(get_running_instances(get_instances()))
-    return instance
 
 
 def spawn_instances(dry_run=False):
@@ -76,7 +70,12 @@ def spawn_instances(dry_run=False):
     if gpu:
         return
     elif not gpu:
-        instance = create_gpu_instance(dry_run)
+        create_gpu_instance(dry_run)
+        instance = None
+        while not instance:
+            print("Not Running.")
+            time.sleep(5)
+            instance = get_gpu_instance(get_running_instances(get_instances()))
         print("Instance created.")
         attach_elastic_ip(instance)
         print("Elastic IP Attached.")
