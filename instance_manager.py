@@ -6,7 +6,12 @@ import requests
 import boto3
 
 
-NON_GPU_JOBS = ["goai-docker-container-builder", "gpu-instance-manager"]
+NON_GPU_JOBS = [
+    "goai-docker-container-builder",
+    "gpu-instance-manager",
+    "gpu-instance-spawner"
+]
+
 JENKINS_URL = os.environ.get("JENKINS_URL", "")
 AWS_CREDENTIALS_URL = os.environ.get("AWS_CREDENTIALS_URL", "")
 AWS_KEY = ""
@@ -77,11 +82,11 @@ def spawn_instances(dry_run=False):
     instances = get_instances()
     running = get_running_instances(instances)
     gpu = get_gpu_instance(running)
-    if gpu:
+    if dry_run:
         return
-    elif dry_run:
+    elif gpu:
         return
-    else:
+    elif not gpu:
         instance = create_gpu_instance()
         attach_elastic_ip(instances[0])
 
@@ -113,16 +118,24 @@ def close_to_next_hour(instance):
     return 60 - time_difference(instance).minute <= 2
 
 
-def terminate_instance(instance):
-    instance.terminate()
-
-
 def manage_instances(dry_run=False):
     jobs = jobs_running(get_jobs())
-    instance = get_gpu_instance(get_instances())
+    gpu = get_gpu_instance(get_running_instances(get_instances()))
+    if not gpu:
+        print("Instance is not running.")
+        return
+
+    if not close_to_next_hour(gpu):
+        print("Instance not yet ready to be stopped.")
+        return
+
     if jobs:
-        pass
-    pass
+        print("Jobs are still running")
+        return
+
+    if not dry_run:
+        print("Terminating instance")
+        gpu.terminate()
 
 
 if __name__ == "__main__":
@@ -155,5 +168,5 @@ if __name__ == "__main__":
     elif args.instance_spawner:
         spawn_instances(args.dry_run)
     elif args.instance_manager:
-        manage_instances(dry_run)
+        manage_instances(args.dry_run)
 
