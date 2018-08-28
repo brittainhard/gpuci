@@ -5,7 +5,6 @@ from jenkinsapi import jenkins
 import requests
 import boto3
 
-
 NON_GPU_JOBS = [
     "goai-docker-container-builder",
     "gpu-instance-manager",
@@ -46,7 +45,7 @@ def attach_elastic_ip(instance):
 
 
 def create_gpu_instance(dry_run=False):
-    instances = cl.request_spot_instances(
+    spot_request = cl.request_spot_instances(
         DryRun=dry_run,
         InstanceCount=1,
         SpotPrice="0.03",
@@ -62,19 +61,12 @@ def create_gpu_instance(dry_run=False):
         }
     )
 
-    status = None
-    while not status:
-        status = cl.describe_instance_status(Filters=
-            [
-                {
-                    "Name": "instance-state-name",
-                    "Values": ["running"]
-                }
-            ],InstanceIds=[instances[0].id]
-        )["InstanceStatuses"]
+    instance = None
+    while not instance:
         print("Not Running.")
         time.sleep(5)
-    return instances[0]
+        instance = get_gpu_instance(get_running_instances(get_instances()))
+    return instance
 
 
 def spawn_instances(dry_run=False):
@@ -86,7 +78,7 @@ def spawn_instances(dry_run=False):
     elif not gpu:
         instance = create_gpu_instance(dry_run)
         print("Instance created.")
-        attach_elastic_ip(instances[0])
+        attach_elastic_ip(instance)
         print("Elastic IP Attached.")
         time.sleep(5)
 
