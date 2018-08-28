@@ -12,15 +12,6 @@ NON_GPU_JOBS = [
     "gpu-instance-spawner"
 ]
 
-JENKINS_URL = os.environ.get("JENKINS_URL", "")
-AWS_CREDENTIALS_URL = os.environ.get("AWS_CREDENTIALS_URL", "")
-AWS_KEY = ""
-AWS_KEY_ID = ""
-
-SECURITY_GROUP = os.environ.get("SECURITY_GROUP", "")
-AMI = os.environ.get("AMI", "")
-ELASTIC_IP = os.environ.get("ELASTIC_IP", "")
-
 
 def get_instances():
     return list(rs.instances.iterator())
@@ -145,6 +136,13 @@ def manage_instances(dry_run=False, terminate_instance=False):
 
 
 if __name__ == "__main__":
+    SECURITY_GROUP = os.environ.get("SECURITY_GROUP", "")
+    AMI = os.environ.get("AMI", "")
+    ELASTIC_IP = os.environ.get("ELASTIC_IP", "")
+    INSTANCE_SIZE = os.environ.get("INSTANCE_SIZE", "")
+    JENKINS_URL = os.environ.get("JENKINS_URL", "")
+    AWS_CREDENTIALS_URL = os.environ.get("AWS_CREDENTIALS_URL", "")
+
     r = requests.get(AWS_CREDENTIALS_URL)
     creds = json.loads(r.text)
     AWS_KEY_ID = creds["AccessKeyId"]
