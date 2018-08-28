@@ -96,7 +96,7 @@ def get_jobs():
 
 
 def jobs_running(jobs):
-    return [job.is_running() for job in jobs]
+    return any([job.is_running() for job in jobs])
 
 
 def time_difference(instance):
@@ -131,7 +131,6 @@ def manage_instances(dry_run=False, terminate_instance=False):
 
     if jobs:
         print("Jobs are still running")
-        print(jobs)
         return
 
     if not dry_run:
