@@ -108,7 +108,7 @@ def time_difference(instance):
 
 def close_to_next_hour(instance):
     difference = 60 - time_difference(instance).minute
-    return difference <= 50, difference
+    return difference <= 2, difference
 
 
 def manage_instances(dry_run=False, terminate_instance=False):
