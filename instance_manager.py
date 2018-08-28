@@ -82,6 +82,7 @@ def spawn_instances(dry_run=False):
         print("Instance created.")
         attach_elastic_ip(instances[0])
         print("Elastic IP Attached.")
+        time.sleep(5)
 
 
 def get_jobs():
