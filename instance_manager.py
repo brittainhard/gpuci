@@ -49,7 +49,7 @@ def create_gpu_instance(dry_run=False):
     spot_request = cl.request_spot_instances(
         DryRun=dry_run,
         InstanceCount=1,
-        SpotPrice="1.50",
+        SpotPrice=SPOT_PRICE,
         Type="one-time",
         LaunchSpecification={
             "ImageId": AMI,
@@ -146,6 +146,7 @@ if __name__ == "__main__":
     INSTANCE_SIZE = os.environ.get("INSTANCE_SIZE", "")
     JENKINS_URL = os.environ.get("JENKINS_URL", "")
     AWS_CREDENTIALS_URL = os.environ.get("AWS_CREDENTIALS_URL", "")
+    SPOT_PRICE = float(os.environ.get("SPOT_PRICE", "0.0"))
 
     r = requests.get(AWS_CREDENTIALS_URL)
     creds = json.loads(r.text)
