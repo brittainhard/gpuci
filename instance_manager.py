@@ -131,6 +131,7 @@ def manage_instances(dry_run=False, terminate_instance=False):
 
     if jobs:
         print("Jobs are still running")
+        print(jobs)
         return
 
     if not dry_run:
