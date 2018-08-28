@@ -52,18 +52,15 @@ def create_gpu_instance(dry_run=False):
         SpotPrice="0.03",
         Type="one-time",
         LaunchSpecification={
-          "ImageId": AMI,
-          "KeyName": "goai-gpuci",
-          "SecurityGroupIds": [SECURITY_GROUP],
-          "InstanceType": INSTANCE_SIZE,
-          "Placement": {
-            "AvailabilityZone": "us-east-2b"
-          }
+            "ImageId": AMI,
+            "KeyName": "goai-gpuci",
+            "SecurityGroupIds": [SECURITY_GROUP],
+            "InstanceType": INSTANCE_SIZE,
+            "Placement": {
+                "AvailabilityZone": "us-east-2b"
+            }
         }
     )
-    if dry_run:
-        print("Dry run successful.")
-        exit(0)
 
     status = None
     while not status:
