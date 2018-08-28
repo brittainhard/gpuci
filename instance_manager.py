@@ -124,7 +124,7 @@ def manage_instances(dry_run=False, terminate_instance=False):
         return
 
     expiry = close_to_next_hour(gpu)
-    print("expiry")
+    print(expiry)
     if not expiry[0]:
         print("Instance not yet ready to be stopped.")
         print("%d minutes left" % expiry[1])
