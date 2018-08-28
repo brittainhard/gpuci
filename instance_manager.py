@@ -118,9 +118,14 @@ def close_to_next_hour(instance):
     return 60 - time_difference(instance).minute <= 2
 
 
-def manage_instances(dry_run=False):
+def manage_instances(dry_run=False, terminate_instance=False):
     jobs = jobs_running(get_jobs())
     gpu = get_gpu_instance(get_running_instances(get_instances()))
+
+    if gpu and terminate_instance:
+        gpu.terminate()
+        return
+
     if not gpu:
         print("Instance is not running.")
         return
@@ -136,6 +141,7 @@ def manage_instances(dry_run=False):
     if not dry_run:
         print("Terminating instance")
         gpu.terminate()
+        return
 
 
 if __name__ == "__main__":
@@ -160,13 +166,16 @@ if __name__ == "__main__":
         action="store_true", default=False)
     parser.add_argument("--dry-run", dest="dry_run",
         action="store_true", default=False)
+    parser.add_argument("--terminate-instance", dest="terminate",
+        action="store_true", default=False)
     args = parser.parse_args()
     if args.instance_spawner and args.instance_manager:
         exit("Cannot spawn and manage instances at the same time.")
     elif not args.instance_spawner and not args.instance_manager:
         exit("Please specify either --spawn-instances or --manage-instances.")
     elif args.instance_spawner:
-        spawn_instances(args.dry_run)
+        spawn_instances(dry_run=args.dry_run)
+        exit(0)
     elif args.instance_manager:
-        manage_instances(args.dry_run)
-
+        manage_instances(dry_run=args.dry_run, terminate_instance=args.terminate)
+        exit(0)
